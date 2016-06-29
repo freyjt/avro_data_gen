@@ -49,6 +49,19 @@ class AvroDataGenerator
 
   end
   
+  def produce_on_object(value, name_arr)
+    obj_string = '@object' # HAHAHAHA don't...seriously
+    # !chomp the first bit, for how avro encodes/decodes
+    name_arr.shift!
+    name_arr.each do |new_name|
+      obj_string << "['#{new_name}']"
+      if eval(obj_string).nil?
+        eval(obj_string) = {} # TODO this follows alllll the way down, we want until the last place so we can put in value, maybe check against last element
+      end
+    end
+
+  end
+
   def in_gets_by(type)
     input = STDIN.gets.chomp
     case type
