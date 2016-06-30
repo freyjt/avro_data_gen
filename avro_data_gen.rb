@@ -1,15 +1,15 @@
 # Setup an object from an avro schema and
 #  write it out
 class AvroDataGenerator
-  AVRO_PRIMITIVES = %w(null boolean int long float double bytes string array).freeze
+  PRIMITIVES = %w(null boolean int long float double bytes string array).freeze
   attr_reader :build
   def initialize(schema_path)
-    @build = {} #will be actually mutated
+    @build = {} # will be actually mutated
     schema_str = File.open(schema_path, 'r').read
     @schema = JSON.parse(schema_str)
   end
 
-  #start off the recursive call
+  # start off the recursive call
   def fill_out
     @build = {}
     descend(@schema, [])
@@ -17,42 +17,49 @@ class AvroDataGenerator
   end
 
   private
-  
+
   # recursively enter the parsed schema
   def descend(ruby_obj, name_arr)
-    if ruby_obj.class == Hash
-      n = name_arr.copy
-      #type can be record, then we descend
-      if ruby_obj['type'] == 'record' || ruby_obj['type'].class == Hash
-        descend(ruby_obj['fields'], n.push ruby_obj['name'])
-      elsif ruby_obj['type'].class == Array
-        #can be one of many
-        request_data_by(ruby_obj['type'], name_arr)
-      elsif AVRO_PRIMITIVES.include?(ruby_obj['type'])
-        request_data_by(ruby_obj['type'], name_arr)
-      else
-        raise "Descent didn't get a type or somethign idk, but it's all broken"
-      end
-      #type can be nil?
+    raise 'Must receive hash object' unless ruby_obj.class == Hash
+
+    n = name_arr.copy
+    # type can be record, then we descend
+    if ruby_obj['type'] == 'record' || ruby_obj['type'].class == Hash
+      descend(ruby_obj['fields'], n.push(ruby_obj['name']))
+    elsif ruby_obj['type'].class == Array
+      # can be one of many
+      request_array_data(ruby_obj['type'], name_arr, ruby_obj['doc'])
+    elsif PRIMITIVES.include?(ruby_obj['type'])
+      request_data_by(ruby_obj['type'], name_arr, ruby_obj['doc'])
     else
-      raise "Descent received a non-hash object, I think you're doing it wrong"
+      raise "Descent didn't get a type or somethign idk, but it's all broken"
     end
+    # type can be nil?
+  end
+
+  def request_array_data(array, name_arr, doc)
+    # TODO
   end
 
   def request_data_by(type, name_arr, doc)
-    location = name_arr.join("::")
-    puts "Gimme some data for:"
+    location = name_arr.join('::')
+    puts 'Gimme some data for:'
     puts location
     unless doc.nil?
       puts "Doc: #{doc}"
     end
+    puts "It should be a #{type}"
+    intermediary = in_gets_by(type)
+    while intermediary == false # NO NO NO NO, did you forget the way this works?
+      puts "No good, I need a #{type}"
+      intermediary = in_gets_by(type)
+    end
+    set_value_on_build(input, name_arr)
   end
 
   def set_value_on_build(value, descent_arr)
     place_value(value, @build, descent_arr)
   end
-
-  private
 
   def place_value(value, object, descent_arr)
     next_loc = descent_arr.shift
@@ -64,11 +71,10 @@ class AvroDataGenerator
   def in_gets_by(type)
     input = STDIN.gets.chomp
     case type
-    when 'string', 'bytes' # bytes correct to leave here? 
-                           # maybe something with md5, maybe parse hex...probably parse hex
+    when 'string', 'bytes' # bytes correct to leave here? Could Take md5 or parse hex
       input
     when 'boolean'
-      v = input[0,1]
+      v = input[0, 1]
       if v == 't' || v == 'T'
         true
       elsif v == 'f' || v == 'F'
@@ -88,7 +94,6 @@ class AvroDataGenerator
     end
   end
 end
-
 
 # Observations
 #  ** Top level name is not used in the ruby object that is generated during decode
