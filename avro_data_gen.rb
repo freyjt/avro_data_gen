@@ -57,7 +57,6 @@ class AvroDataGenerator
     abbr = array.map(|member| member[0,2])
     puts "Please enter the first two letters of the data-type"
     input = STDIN.gets
-    # ABUSE THE CALL STACK NOOB, AT LEAST IT ISN'T A WHILE
     (abbr.include?(input[0,2].to_lower)) ? input : get_array_data_type(array)
   end
 
