@@ -48,6 +48,12 @@ class AvroDataGenerator
     end
   end
 
+  def set_value_on_build(value, descent_arr)
+    place_value(value, @build, descent_arr)
+  end
+
+  private
+
   def place_value(value, object, descent_arr)
     next_loc = descent_arr.shift
     placer = object[next_loc].nil? ? {} : object[next_loc]
