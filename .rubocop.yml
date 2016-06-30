@@ -1,0 +1,80 @@
+AllCops:
+  Include:
+    - Gemfile
+    - Rakefile
+  Exclude:
+    - bin/**/*
+    - vendor/**/*
+    - tmp/**/*
+    - script/**/*
+    - 'features/support/cpp_util/entities/bmv/**/*'
+
+Metrics/ClassLength:
+  Max: 150
+
+Lint/RescueException:
+  Enabled: false
+
+# Offense count: 10
+Metrics/AbcSize:
+  Max: 43
+
+# Offense count: 3
+Metrics/CyclomaticComplexity:
+  Max: 18
+
+Metrics/PerceivedComplexity:
+  Max: 12
+
+Lint/AmbiguousRegexpLiteral:
+  Enabled: false
+
+CollectionMethods:
+  Enabled: false
+
+Encoding:
+  Enabled: false
+
+LineLength:
+  Max: 400
+
+Documentation:
+  Enabled: false
+
+CaseIndentation:
+  Enabled: false
+
+DotPosition:
+  Enabled: false
+
+Style/DoubleNegation:
+  Exclude:
+    - 'features/support/cpp_util/extensions/hash.rb'
+    - 'features/support/cpp_util/extensions/string_extensions.rb'
+
+Lint/IneffectiveAccessModifier:
+  Exclude:
+    - 'features/support/cpp_util/entities/base_entity.rb'
+    - 'features/support/cpp_util/marklogic/repositories/bmv_repository.rb'
+
+MethodLength:
+  CountComments: false
+  Max: 25
+
+Blocks:
+  Enabled: false
+  Enabled: false
+
+AlignParameters:
+  Enabled: false
+
+IfUnlessModifier:
+  Enabled: false
+
+TrailingCommaInLiteral:
+  Enabled: false
+
+# Offense count: 2
+# Configuration parameters: CountComments.
+Metrics/ModuleLength:
+  Max: 172

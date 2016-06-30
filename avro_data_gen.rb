@@ -38,7 +38,27 @@ class AvroDataGenerator
   end
 
   def request_array_data(array, name_arr, doc)
-    # TODO
+    location = name_arr.join('::')
+    puts 'Gimme some data for:'
+    puts location
+    unless doc.nil?
+      puts "Doc: #{doc}"
+    end
+    puts "It should be a #{type}"
+    intermediary = in_gets_by(type)
+    while intermediary == false # NO NO NO NO, did you forget the way this works?
+      puts "No good, I need a #{type}"
+      intermediary = in_gets_by(type)
+    end
+    set_value_on_build(input, name_arr)
+  end
+
+  def get_array_data_type(array)
+    abbr = array.map(|member| member[0,2])
+    puts "Please enter the first two letters of the data-type"
+    input = STDIN.gets
+    # ABUSE THE CALL STACK NOOB, AT LEAST IT ISN'T A WHILE
+    (abbr.include?(input[0,2].to_lower)) ? input : get_array_data_type(array)
   end
 
   def request_data_by(type, name_arr, doc)
