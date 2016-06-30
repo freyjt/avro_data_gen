@@ -48,29 +48,11 @@ class AvroDataGenerator
     end
   end
 
-# POC
-# string_arr = %w(one two three four)
-# value      = 42
-
-# @obj       = {}
-# base_name  = '@obj'
-# string_arr.each do |str|
-#   base_name << "['#{str}']"
-#   if eval(base_name).nil?
-#     eval("#{base_name} = {}")
-#   end
-# end
-# @obj['one']['two']['three']['four'] = value
-# puts @obj
-  def produce_on_object(value, name_arr)
-    obj_string = '@object' # HAHAHAHA don't...seriously
-    # !chomp the first name, avro encodes/decodes an object while ignoring this name
-    name_arr.shift!
-    name_arr.each do |new_name|
-      obj_string << "['#{new_name}']"
-      eval(obj_string) = {} if eval(obj_string).nil?
-      eval(obj_string) = value if new_name == name_arr.last
-    end
+  def place_value(value, object, descent_arr)
+    next_loc = descent_arr.shift
+    placer = object[next_loc].nil? ? {} : object[next_loc]
+    object[next_loc] = descent_arr.empty? ? value : placer
+    place_value(value, object[next_loc], descent_arr) unless descent_arr.empty?
   end
 
   def in_gets_by(type)
